@@ -1,9 +1,10 @@
+require('dotenv').config();
+
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const auth = async (req, res, next) => {
   const { authorization } = req.headers;
-  // authorization === 'Bearer laksjdflaksdjasdfklj'
 
   if (!authorization) {
     return res.status(401).send({ error: 'You must be logged in.' });
@@ -14,10 +15,9 @@ const auth = async (req, res, next) => {
     if (err) {
       return res.status(401).send({ error: 'You must be logged in.' });
     }
+    const { _id } = payload;
 
-    const { userId } = payload;
-
-    const user = await User.findById(userId);
+    const user = await User.findById(_id);
     req.user = user;
     next();
   });

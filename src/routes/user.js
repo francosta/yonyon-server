@@ -44,4 +44,11 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Get user
+router.get('/me', auth, async (req, res) => {
+  const { user } = req;
+
+  res.status(200).send(user);
+});
+
 module.exports = router;

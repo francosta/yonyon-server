@@ -37,7 +37,6 @@ const userSchema = new mongoose.Schema({
 });
 
 // Authentiate user
-// statics methods are accessible on the models. This are like class methods.
 userSchema.methods.authenticate = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user) {
@@ -53,9 +52,7 @@ userSchema.methods.authenticate = async (email, password) => {
   return user;
 };
 
-// userSchema.methods methods are accessible on the instances. These are like instance methods.
-
-//Genereate JWT for user authentication
+//Generate JWT for user authentication
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
   const token = await jwt.sign(
@@ -77,6 +74,16 @@ userSchema.pre('save', async function (next) {
 
   next();
 });
+
+userSchema.methods.toJSON = function () {
+  const user = this;
+  const userObject = user.toObject();
+
+  delete userObject.password;
+  delete userObject.email;
+  delete userObject.__v;
+  return userObject;
+};
 
 const User = mongoose.model('User', userSchema);
 
