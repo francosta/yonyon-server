@@ -5,7 +5,10 @@ const questionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  answers: { yes: [Number], no: [Number] },
+  answers: {
+    yes: { type: Number, default: 0 },
+    no: { type: Number, default: 0 },
+  },
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
