@@ -33,17 +33,24 @@ router.post('/questions', auth, async (req, res) => {
   }
 });
 
-//Update question
+// Answer question
 router.patch('/questions/:id', auth, async (req, res) => {
   const { answer } = req.body;
-  console.log(answer);
+  const { user } = req;
 
   try {
     const question = await Question.findById(req.params.id);
-    answer === true
-      ? (question.answers.yes = question.answers.yes + 1)
-      : (question.answers.no = question.answers.no + 1);
-    await question.save();
+    if (answer === true) {
+      question.answers.yes = question.answers.yes + 1;
+      await question.save();
+      user.answers.yes.push(question._id);
+      await user.save();
+    } else {
+      question.answers.no = question.answers.no + 1;
+      await question.save();
+      user.answers.no.push(question._id);
+      await user.save();
+    }
     res.status(200).send(question);
   } catch (e) {
     res.status(400).send(e);
