@@ -15,7 +15,7 @@ const yonSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  answers: answerSchema,
+  answers: [answerSchema],
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

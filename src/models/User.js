@@ -4,15 +4,18 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const answerSchema = new mongoose.Schema({
-  yon: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Yon',
+const answerSchema = new mongoose.Schema(
+  {
+    yon: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Yon',
+    },
+    answer: {
+      type: Boolean,
+    },
   },
-  answer: {
-    type: Boolean,
-  },
-});
+  { _id: false }
+);
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -28,8 +31,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  yons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Yon' }],
-  answers: [answerSchema],
+  createdYons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Yon' }],
+  submittedAnswers: [answerSchema],
 });
 
 // Authentiate user
@@ -52,7 +55,7 @@ userSchema.methods.authenticate = async (email, password) => {
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
   const token = await jwt.sign(
-    { _id: user.id.toString() },
+    { userId: user.id.toString() },
     process.env.JWT_SECRET
   );
   // user.tokens = user.tokens.concat({ token });

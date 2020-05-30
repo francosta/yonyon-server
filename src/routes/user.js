@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 
 const auth = require('../middleware/auth');
 const User = mongoose.model('User');
+const Yon = mongoose.model('Yon');
 const router = express.Router();
 
 // Create user
@@ -46,9 +47,53 @@ router.post('/login', async (req, res) => {
 
 // Get user
 router.get('/me', auth, async (req, res) => {
-  const user = await User.findById(req.user._id).populate('questions');
+  const user = await User.findById(req.user._id)
+    .populate('createdYons')
+    .populate('submittedAnswers.yon');
 
   res.status(200).send(user);
+});
+
+// Get user's unanswered yons
+router.get('/me/yons', auth, async (req, res) => {
+  let unansweredYons;
+  try {
+    const user = await User.findById(req.user._id);
+    const yons = await Yon.find({});
+
+    const yonsIds = yons.map((yon) => yon._id);
+    const answeredYonsIds = user.submittedAnswers.map((answer) => answer.yon);
+    const unansweredYonsIds = yonsIds.filter(
+      (val) => !answeredYonsIds.includes(val)
+    );
+
+    Yon.find({ _id: { $in: unansweredYonsIds } }, function (err, data) {
+      res.status(200).send(data);
+    });
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+// Get user's answered yons
+router.get('/me/answers', auth, async (req, res) => {
+  let unansweredYons;
+  try {
+    const user = await User.findById(req.user._id);
+    const yons = await Yon.find({});
+
+    const yonsIds = yons.map((yon) => yon._id);
+    const answeredYonsIds = user.submittedAnswers.map((answer) => answer.yon);
+    const unansweredYonsIds = yonsIds.filter(
+      (val) => !answeredYonsIds.includes(val)
+    );
+
+    Yon.find({ _id: { $in: answeredYonsIds } }, function (err, data) {
+      res.status(200).send(data);
+    });
+  } catch (e) {
+    res.status(400).send(e);
+  }
 });
 
 module.exports = router;
