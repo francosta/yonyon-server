@@ -4,6 +4,16 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const answerSchema = new mongoose.Schema({
+  yon: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Yon',
+  },
+  answer: {
+    type: Boolean,
+  },
+});
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -18,23 +28,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }],
-  answers: {
-    yes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Question',
-        required: true,
-      },
-    ],
-    no: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Question',
-        required: true,
-      },
-    ],
-  },
+  yons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Yon' }],
+  answers: [answerSchema],
 });
 
 // Authentiate user

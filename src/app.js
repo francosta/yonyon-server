@@ -1,15 +1,15 @@
 require('./models/User');
-require('./models/Question');
+require('./models/Yon');
 const express = require('express');
 const bodyParser = require('body-parser');
 
 const userRoutes = require('./routes/user');
-const questionRoutes = require('./routes/question');
+const yonRoutes = require('./routes/yon');
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(userRoutes);
-app.use(questionRoutes);
+app.use(yonRoutes);
 
 module.exports = app;
