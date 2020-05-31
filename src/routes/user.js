@@ -1,10 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-
 const auth = require('../middleware/auth');
+
 const User = mongoose.model('User');
 const Yon = mongoose.model('Yon');
 const router = express.Router();
@@ -38,7 +39,6 @@ router.post('/login', async (req, res) => {
   try {
     await user.authenticate(email, password);
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-
     res.send({ user, token });
   } catch (err) {
     return res.status(422).send({ error: 'Invalid password or email' });
@@ -47,14 +47,15 @@ router.post('/login', async (req, res) => {
 
 // Get user
 router.get('/me', auth, async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id)
+    .populate('submittedAnswers.yon')
+    .populate('createdYons');
 
   res.status(200).send(user);
 });
 
 // Get user's unanswered yons
 router.get('/me/yons', auth, async (req, res) => {
-  let unansweredYons;
   try {
     const user = await User.findById(req.user._id);
     const yons = await Yon.find({});
@@ -75,16 +76,10 @@ router.get('/me/yons', auth, async (req, res) => {
 
 // Get user's answered yons
 router.get('/me/answers', auth, async (req, res) => {
-  let unansweredYons;
   try {
     const user = await User.findById(req.user._id);
-    const yons = await Yon.find({});
 
-    const yonsIds = yons.map((yon) => yon._id);
     const answeredYonsIds = user.submittedAnswers.map((answer) => answer.yon);
-    const unansweredYonsIds = yonsIds.filter(
-      (val) => !answeredYonsIds.includes(val)
-    );
 
     Yon.find({ _id: { $in: answeredYonsIds } }, function (err, data) {
       res.status(200).send(data);
