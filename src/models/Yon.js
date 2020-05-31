@@ -1,14 +1,17 @@
 const mongoose = require('mongoose');
 
-const answerSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+const answerSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    answer: {
+      type: Boolean,
+    },
   },
-  answer: {
-    type: Boolean,
-  },
-});
+  { _id: false }
+);
 
 const yonSchema = new mongoose.Schema({
   yon: {

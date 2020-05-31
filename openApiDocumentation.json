@@ -20,5 +20,164 @@
     { "url": "https://api_url_testing", "description": "Testing server" },
     { "url": "https://api_url_production", "description": "Production server" }
   ],
-  "tags": [{ "name": "Users" }, { "name": "Yons" }]
+  "tags": [{ "name": "Users" }, { "name": "Yons" }],
+  "paths": {
+    "/yons": {
+      "get": {
+        "tags": ["Yons"],
+        "description": "Get yons",
+        "operationId": "getYons",
+        "security": {
+          "bearerAuth": {
+            "$ref": "#/components/securitySchemes/BearerAuth"
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "security",
+            "schema": {
+              "$ref": "#/components/parameters/authHeader"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of yons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Yon"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "companyId is missing",
+                  "internal_code": "missing_parameters"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "description": "User object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/userId"
+          },
+          "username": {
+            "$ref": "#/components/schemas/username"
+          },
+          "email": {
+            "$ref": "#/components/schemas/email"
+          }
+        }
+      },
+      "Yon": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/yonId"
+          },
+          "yon": {
+            "$ref": "#/components/schemas/yon"
+          },
+          "author": {
+            "$ref": "#/components/schemas/User"
+          },
+          "answers": {
+            "type": "array",
+            "description": "Array of objects describing answers to questions",
+            "items": {
+              "$ref": "#/components/schemas/answer"
+            }
+          }
+        }
+      },
+      "yonId": {
+        "type": "string",
+        "description": "Yon identification number",
+        "example": "5ed2911bdacbe6098d3310bf",
+        "hidden": "true"
+      },
+      "userId": {
+        "type": "string",
+        "description": "User identification number",
+        "example": "5ed2911bdacbe6098d3310bf"
+      },
+      "yon": {
+        "type": "string",
+        "description": "Text of the Yon",
+        "example": "dua lipa > beyonce"
+      },
+      "author": {
+        "$ref": "#/components/schemas/User"
+      },
+      "answer": {
+        "type": "object",
+        "description": "Object describing an answer to a question",
+        "properties": {
+          "userId": {
+            "$ref": "#/components/schemas/userId"
+          },
+          "answer": {
+            "type": "boolean",
+            "description": "Boolean describing the answer to question",
+            "example": "false"
+          }
+        },
+        "example": [
+          {
+            "_id": "5ed2915edacbe6098d3310c0",
+            "userId": "5ed290e5dacbe6098d3310bd",
+            "answer": false
+          }
+        ]
+      },
+      "username": {
+        "type": "string",
+        "description": "Username of the user",
+        "example": "miguelfcosta"
+      },
+      "email": {
+        "type": "string",
+        "description": "User's email address",
+        "exmaple": "miguel@yonyon.io"
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "parameters": {
+      "authHeader": {
+        "name": "Authotization token",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        },
+        "required": "true",
+        "description": "Authorization token from browser. Should be in the authorization header as 'Bearer token'",
+        "exmaple": "'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZGYyMTFlMzU0MDg2MDA5NGQ1OGE3MWUiLCJpYXQiOjE1NzYxNTM2ODZ9.qkBCvfcbx7lp2_UM9Sgp601e36YZJCPw6mcEt-RZ2FI'"
+      }
+    }
+  }
 }
