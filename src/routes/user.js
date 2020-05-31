@@ -47,9 +47,7 @@ router.post('/login', async (req, res) => {
 
 // Get user
 router.get('/me', auth, async (req, res) => {
-  const user = await User.findById(req.user._id)
-    .populate('createdYons')
-    .populate('submittedAnswers.yon');
+  const user = await User.findById(req.user._id);
 
   res.status(200).send(user);
 });
