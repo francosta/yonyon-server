@@ -30,7 +30,10 @@ router.post('/login', async (req, res) => {
     return res.status(422).send({ error: 'Must provide email and password' });
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).populate({
+    path: 'createdYons',
+    options: { sort: { created_at: -1 } },
+  });
   if (!user) {
     return res.status(422).send({ error: 'Invalid password or email' });
   }
@@ -47,7 +50,10 @@ router.post('/login', async (req, res) => {
 
 // Get user
 router.get('/me', auth, async (req, res) => {
-  const user = await User.findById(req.user._id).populate('createdYons');
+  const user = await User.findById(req.user._id).populate({
+    path: 'createdYons',
+    options: { sort: { created_at: -1 } },
+  });
 
   res.status(200).send(user);
 });
