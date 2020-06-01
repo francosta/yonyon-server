@@ -10,18 +10,21 @@ const answerSchema = new mongoose.Schema({
   },
 });
 
-const yonSchema = new mongoose.Schema({
-  yon: {
-    type: String,
-    required: true,
+const yonSchema = new mongoose.Schema(
+  {
+    yon: {
+      type: String,
+      required: true,
+    },
+    answers: [answerSchema],
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
-  answers: [answerSchema],
-  author: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-});
+  { timestamps: { createdAt: 'created_at' } }
+);
 
 const Yon = mongoose.model('Yon', yonSchema);
 

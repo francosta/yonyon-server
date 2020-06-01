@@ -10,7 +10,7 @@ const router = express.Router();
 // Get all yons
 router.get('/yons', auth, async (req, res) => {
   try {
-    const yons = await Yon.find({}).populate('author');
+    const yons = await Yon.find({}).sort({ created_at: -1 }).populate('author');
 
     res.status(200).send(yons);
   } catch (error) {

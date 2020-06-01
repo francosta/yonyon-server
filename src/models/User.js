@@ -14,26 +14,30 @@ const answerSchema = new mongoose.Schema(
       type: Boolean,
     },
   },
-  { _id: false }
+  { _id: false },
+  { timestamps: { createdAt: 'created_at' } }
 );
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
+const userSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    createdYons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Yon' }],
+    submittedAnswers: [answerSchema],
   },
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  createdYons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Yon' }],
-  submittedAnswers: [answerSchema],
-});
+  { timestamps: { createdAt: 'created_at' } }
+);
 
 // Authentiate user
 userSchema.methods.authenticate = async (email, password) => {

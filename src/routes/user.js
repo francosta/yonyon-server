@@ -47,7 +47,7 @@ router.post('/login', async (req, res) => {
 
 // Get user
 router.get('/me', auth, async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id).populate('createdYons');
 
   res.status(200).send(user);
 });
@@ -56,8 +56,10 @@ router.get('/me', auth, async (req, res) => {
 router.get('/me/yons', auth, async (req, res) => {
   let unansweredYons;
   try {
-    const user = await User.findById(req.user._id);
-    const yons = await Yon.find({});
+    const user = await User.findById(req.user._id)
+      .sort({ created_at: -1 })
+      .populate('createdYons');
+    const yons = await Yon.find({}).sort({ created_at: -1 });
 
     const yonsIds = yons.map((yon) => yon._id);
     const answeredYonsIds = user.submittedAnswers.map((answer) => answer.yon);
@@ -65,9 +67,11 @@ router.get('/me/yons', auth, async (req, res) => {
       (val) => !answeredYonsIds.includes(val)
     );
 
-    Yon.find({ _id: { $in: unansweredYonsIds } }, function (err, data) {
-      res.status(200).send(data);
-    });
+    Yon.find({ _id: { $in: unansweredYonsIds } })
+      .sort({ created_at: -1 })
+      .exec(function (err, data) {
+        res.status(200).send(data);
+      });
   } catch (e) {
     res.status(400).send(e);
   }
@@ -78,7 +82,7 @@ router.get('/me/answers', auth, async (req, res) => {
   let unansweredYons;
   try {
     const user = await User.findById(req.user._id);
-    const yons = await Yon.find({});
+    const yons = await Yon.find({}).sort({ created_at: -1 });
 
     const yonsIds = yons.map((yon) => yon._id);
     const answeredYonsIds = user.submittedAnswers.map((answer) => answer.yon);
@@ -86,9 +90,11 @@ router.get('/me/answers', auth, async (req, res) => {
       (val) => !answeredYonsIds.includes(val)
     );
 
-    Yon.find({ _id: { $in: answeredYonsIds } }, function (err, data) {
-      res.status(200).send(data);
-    });
+    Yon.find({ _id: { $in: answeredYonsIds } })
+      .sort({ created_at: -1 })
+      .exec(function (err, data) {
+        res.status(200).send(data);
+      });
   } catch (e) {
     res.status(400).send(e);
   }
