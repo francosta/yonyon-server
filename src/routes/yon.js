@@ -21,7 +21,9 @@ router.get('/yons', auth, async (req, res) => {
 // Create yon
 router.post('/yons', auth, async (req, res) => {
   const user = req.user;
-  const yon = new Yon({ ...req.body, author: user._id });
+  const answer = { userId: user._id, answer: req.body.answer };
+  const yon = new Yon({ yon: req.body.yon, author: user._id });
+  yon.answers.push(answer);
 
   try {
     await yon.save();
