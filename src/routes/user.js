@@ -69,9 +69,12 @@ router.get('/me/yons', auth, async (req, res) => {
 
     const yonsIds = yons.map((yon) => yon._id);
     const answeredYonsIds = user.submittedAnswers.map((answer) => answer.yon);
-    const unansweredYonsIds = yonsIds.filter(
-      (val) => !answeredYonsIds.includes(val)
-    );
+
+    const unansweredYonsIds = yonsIds.filter((val) => {
+      if (!answeredYonsIds.includes(val)) {
+        return val;
+      }
+    });
 
     Yon.find({ _id: { $in: unansweredYonsIds } })
       .sort({ created_at: -1 })

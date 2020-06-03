@@ -22,8 +22,10 @@ router.get('/yons', auth, async (req, res) => {
 router.post('/yons', auth, async (req, res) => {
   const user = req.user;
   const answer = { userId: user._id, answer: req.body.answer };
+
   const yon = new Yon({ yon: req.body.yon, author: user._id });
   yon.answers.push(answer);
+  user.submittedAnswers.push({ yon: yon._id, answer: req.body.answer });
 
   try {
     await yon.save();
