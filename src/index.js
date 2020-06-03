@@ -3,6 +3,8 @@ const app = require('./app');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
+const port = process.env.PORT;
+
 const mongoUri = process.env.MONGO_URI;
 if (!mongoUri) {
   throw new Error(
@@ -21,6 +23,6 @@ mongoose.connection.on('error', (err) => {
   console.error('Error connecting to mongo', err);
 });
 
-app.listen(3000, () => {
-  console.log('Listening on port 3000');
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
 });
